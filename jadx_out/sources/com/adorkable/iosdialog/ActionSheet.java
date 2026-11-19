@@ -1,0 +1,184 @@
+package com.adorkable.iosdialog;
+
+import android.app.Dialog;
+import android.content.Context;
+import android.graphics.Color;
+import android.view.Display;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.List;
+
+/* JADX INFO: loaded from: classes4.dex */
+public class ActionSheet {
+    private Context context;
+    private Dialog dialog;
+    private Display display;
+    private LinearLayout lLayout_content;
+    private ScrollView sLayout_content;
+    private List<SheetItem> sheetItemList;
+    private boolean showTitle = false;
+    private TextView txt_title;
+
+    public interface OnSheetItemClickListener {
+        void onClick(int i);
+    }
+
+    public ActionSheet(Context context) {
+        this.context = context;
+        this.display = ((WindowManager) context.getSystemService("window")).getDefaultDisplay();
+    }
+
+    public ActionSheet builder() {
+        View viewInflate = LayoutInflater.from(this.context).inflate(R.layout.view_actionsheet, (ViewGroup) null);
+        viewInflate.setMinimumWidth(this.display.getWidth());
+        this.sLayout_content = (ScrollView) viewInflate.findViewById(R.id.sLayout_content);
+        this.lLayout_content = (LinearLayout) viewInflate.findViewById(R.id.lLayout_content);
+        this.txt_title = (TextView) viewInflate.findViewById(R.id.txt_title);
+        ((TextView) viewInflate.findViewById(R.id.txt_cancel)).setOnClickListener(new View.OnClickListener() { // from class: com.adorkable.iosdialog.ActionSheet.1
+            @Override // android.view.View.OnClickListener
+            public void onClick(View view) {
+                ActionSheet.this.dialog.dismiss();
+            }
+        });
+        Dialog dialog = new Dialog(this.context, R.style.ActionSheetDialogStyle);
+        this.dialog = dialog;
+        dialog.setContentView(viewInflate);
+        setLocation(83);
+        return this;
+    }
+
+    public ActionSheet setTitle(String str) {
+        this.showTitle = true;
+        this.txt_title.setVisibility(0);
+        this.txt_title.setText(str);
+        return this;
+    }
+
+    public ActionSheet setCancelable(boolean z) {
+        this.dialog.setCancelable(z);
+        return this;
+    }
+
+    public ActionSheet setCanceledOnTouchOutside(boolean z) {
+        this.dialog.setCanceledOnTouchOutside(z);
+        return this;
+    }
+
+    public ActionSheet addSheetItem(String str, SheetItemColor sheetItemColor, OnSheetItemClickListener onSheetItemClickListener) {
+        if (this.sheetItemList == null) {
+            this.sheetItemList = new ArrayList();
+        }
+        this.sheetItemList.add(new SheetItem(str, sheetItemColor, onSheetItemClickListener));
+        return this;
+    }
+
+    public ActionSheet setLocation(int i) {
+        Window window = this.dialog.getWindow();
+        window.setGravity(i);
+        WindowManager.LayoutParams attributes = window.getAttributes();
+        attributes.x = 0;
+        attributes.y = 0;
+        window.setAttributes(attributes);
+        return this;
+    }
+
+    private void setSheetItems() {
+        List<SheetItem> list = this.sheetItemList;
+        if (list == null || list.size() <= 0) {
+            return;
+        }
+        int size = this.sheetItemList.size();
+        if (size >= 7) {
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) this.sLayout_content.getLayoutParams();
+            layoutParams.height = this.display.getHeight() / 2;
+            this.sLayout_content.setLayoutParams(layoutParams);
+        }
+        for (final int i = 1; i <= size; i++) {
+            SheetItem sheetItem = this.sheetItemList.get(i - 1);
+            String str = sheetItem.name;
+            SheetItemColor sheetItemColor = sheetItem.color;
+            final OnSheetItemClickListener onSheetItemClickListener = sheetItem.itemClickListener;
+            TextView textView = new TextView(this.context);
+            textView.setText(str);
+            textView.setTextSize(18.0f);
+            textView.setGravity(17);
+            if (size == 1) {
+                if (this.showTitle) {
+                    textView.setBackgroundResource(R.drawable.actionsheet_bottom_selector);
+                } else {
+                    textView.setBackgroundResource(R.drawable.actionsheet_single_selector);
+                }
+            } else if (this.showTitle) {
+                if (i >= 1 && i < size) {
+                    textView.setBackgroundResource(R.drawable.actionsheet_middle_selector);
+                } else {
+                    textView.setBackgroundResource(R.drawable.actionsheet_bottom_selector);
+                }
+            } else if (i == 1) {
+                textView.setBackgroundResource(R.drawable.actionsheet_top_selector);
+            } else if (i < size) {
+                textView.setBackgroundResource(R.drawable.actionsheet_middle_selector);
+            } else {
+                textView.setBackgroundResource(R.drawable.actionsheet_bottom_selector);
+            }
+            if (sheetItemColor == null) {
+                textView.setTextColor(Color.parseColor(SheetItemColor.White.getName()));
+            } else {
+                textView.setTextColor(Color.parseColor(sheetItemColor.getName()));
+            }
+            textView.setLayoutParams(new LinearLayout.LayoutParams(-1, (int) ((this.context.getResources().getDisplayMetrics().density * 45.0f) + 0.5f)));
+            textView.setOnClickListener(new View.OnClickListener() { // from class: com.adorkable.iosdialog.ActionSheet.2
+                @Override // android.view.View.OnClickListener
+                public void onClick(View view) {
+                    onSheetItemClickListener.onClick(i);
+                    ActionSheet.this.dialog.dismiss();
+                }
+            });
+            this.lLayout_content.addView(textView);
+        }
+    }
+
+    public void show() {
+        setSheetItems();
+        this.dialog.show();
+    }
+
+    public class SheetItem {
+        SheetItemColor color;
+        OnSheetItemClickListener itemClickListener;
+        String name;
+
+        public SheetItem(String str, SheetItemColor sheetItemColor, OnSheetItemClickListener onSheetItemClickListener) {
+            this.name = str;
+            this.color = sheetItemColor;
+            this.itemClickListener = onSheetItemClickListener;
+        }
+    }
+
+    public enum SheetItemColor {
+        Blue("#037BFF"),
+        Red("#FD4A2E"),
+        White("#ffffff");
+
+        private String name;
+
+        SheetItemColor(String str) {
+            this.name = str;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        public void setName(String str) {
+            this.name = str;
+        }
+    }
+}

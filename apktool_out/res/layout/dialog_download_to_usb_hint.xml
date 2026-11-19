@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:orientation="vertical" android:tag="layout/dialog_download_to_usb_hint_0" android:background="@color/color_main" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:gravity="center_vertical" android:layout_gravity="center" android:id="@id/llDownload" android:layout_width="477.0dp" android:layout_height="67.0dp" android:layout_marginLeft="35.0dp" android:layout_marginTop="25.0dp" android:layout_marginRight="35.0dp" android:layout_marginBottom="15.0dp" style="@style/FocusFilterItemSelectorStyle">
+        <ImageView android:visibility="gone" android:layout_width="25.0dp" android:layout_height="25.0dp" android:layout_marginLeft="32.0dp" android:layout_marginRight="15.0dp" android:src="@mipmap/ic_connitue_action" />
+        <TextView android:textSize="24.0sp" android:textStyle="bold" android:textColor="@color/white_30alpha" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Download to Usb device" android:layout_marginStart="30.0dp" />
+    </LinearLayout>
+</FrameLayout>

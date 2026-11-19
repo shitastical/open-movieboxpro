@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center" android:orientation="vertical" android:paddingTop="8.0dp" android:paddingBottom="8.0dp" android:focusable="true" android:clickable="true" android:descendantFocusability="blocksDescendants" android:layout_width="wrap_content" android:layout_height="wrap_content" android:paddingStart="10.0dp" android:paddingEnd="10.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="16.0sp" android:textColor="@color/gray_999" android:id="@id/tvWeek" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    <FrameLayout android:layout_width="48.0dp" android:layout_height="48.0dp" android:layout_marginTop="8.0dp">
+        <View android:layout_gravity="center" android:id="@id/viewFocusRing" android:background="@drawable/tv_guide_day_focus_ring" android:visibility="gone" android:layout_width="48.0dp" android:layout_height="48.0dp" />
+        <TextView android:textSize="16.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center" android:layout_gravity="center" android:id="@id/tvDay" android:layout_width="36.0dp" android:layout_height="36.0dp" android:includeFontPadding="false" />
+    </FrameLayout>
+</LinearLayout>

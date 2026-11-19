@@ -1,0 +1,258 @@
+package io.microshow.rxffmpeg.player;
+
+import android.media.MediaPlayer;
+import android.os.Build;
+import android.view.Surface;
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+/* JADX INFO: loaded from: classes5.dex */
+public abstract class SystemMediaPlayer extends BaseMediaPlayer {
+    private Disposable mTimeUpdateDisposable;
+    protected String path;
+    public int volumePercent = -1;
+    public MediaPlayer mMediaPlayer = new MediaPlayer();
+    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public int getMuteSolo() {
+        return 0;
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public void setMuteSolo(int i) {
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public void setSurface(Surface surface) {
+        if (surface != null) {
+            this.mMediaPlayer.setSurface(surface);
+        }
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public void setDataSource(String str) {
+        try {
+            this.path = str;
+            this.mMediaPlayer.setDataSource(str);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public void prepare() {
+        this.mMediaPlayer.prepareAsync();
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public void pause() {
+        this.mMediaPlayer.pause();
+        cancelTimeUpdateDisposable();
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public void resume() {
+        start();
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public void start() {
+        this.mMediaPlayer.start();
+        startTimeUpdateDisposable();
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public void stop() {
+        this.mMediaPlayer.stop();
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public void seekTo(int i) {
+        if (Build.VERSION.SDK_INT >= 26) {
+            this.mMediaPlayer.seekTo(i, 3);
+        } else {
+            this.mMediaPlayer.seekTo(i);
+        }
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public int getDuration() {
+        return this.mMediaPlayer.getDuration();
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public void setLooping(boolean z) {
+        this.mMediaPlayer.setLooping(z);
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public boolean isLooping() {
+        return this.mMediaPlayer.isLooping();
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public boolean isPlaying() {
+        return this.mMediaPlayer.isPlaying();
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public void setVolume(int i) {
+        this.volumePercent = i;
+        float f = i / 100.0f;
+        this.mMediaPlayer.setVolume(f, f);
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public int getVolume() {
+        return this.volumePercent;
+    }
+
+    @Override // io.microshow.rxffmpeg.player.IMediaPlayer
+    public void release() {
+        setOnPreparedListener(null);
+        setOnVideoSizeChangedListener(null);
+        setOnLoadingListener(null);
+        setOnTimeUpdateListener(null);
+        setOnErrorListener(null);
+        setOnCompleteListener(null);
+        cancelTimeUpdateDisposable();
+        CompositeDisposable compositeDisposable = this.mCompositeDisposable;
+        if (compositeDisposable != null) {
+            compositeDisposable.clear();
+            this.mCompositeDisposable = null;
+        }
+        this.mMediaPlayer.release();
+    }
+
+    @Override // io.microshow.rxffmpeg.player.BaseMediaPlayer
+    public void setOnPreparedListener(final IMediaPlayer.OnPreparedListener onPreparedListener) {
+        super.setOnPreparedListener(onPreparedListener);
+        this.mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() { // from class: io.microshow.rxffmpeg.player.SystemMediaPlayer.1
+            @Override // android.media.MediaPlayer.OnPreparedListener
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                IMediaPlayer.OnPreparedListener onPreparedListener2 = onPreparedListener;
+                if (onPreparedListener2 != null) {
+                    onPreparedListener2.onPrepared(SystemMediaPlayer.this);
+                }
+            }
+        });
+    }
+
+    @Override // io.microshow.rxffmpeg.player.BaseMediaPlayer
+    public void setOnVideoSizeChangedListener(final IMediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener) {
+        super.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
+        this.mMediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() { // from class: io.microshow.rxffmpeg.player.SystemMediaPlayer.2
+            @Override // android.media.MediaPlayer.OnVideoSizeChangedListener
+            public void onVideoSizeChanged(MediaPlayer mediaPlayer, int i, int i2) {
+                IMediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener2 = onVideoSizeChangedListener;
+                if (onVideoSizeChangedListener2 != null) {
+                    onVideoSizeChangedListener2.onVideoSizeChanged(SystemMediaPlayer.this, i, i2, i / i2);
+                }
+            }
+        });
+    }
+
+    @Override // io.microshow.rxffmpeg.player.BaseMediaPlayer
+    public void setOnLoadingListener(IMediaPlayer.OnLoadingListener onLoadingListener) {
+        super.setOnLoadingListener(onLoadingListener);
+    }
+
+    @Override // io.microshow.rxffmpeg.player.BaseMediaPlayer
+    public void setOnErrorListener(final IMediaPlayer.OnErrorListener onErrorListener) {
+        super.setOnErrorListener(onErrorListener);
+        this.mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() { // from class: io.microshow.rxffmpeg.player.SystemMediaPlayer.3
+            @Override // android.media.MediaPlayer.OnErrorListener
+            public boolean onError(MediaPlayer mediaPlayer, int i, int i2) {
+                IMediaPlayer.OnErrorListener onErrorListener2 = onErrorListener;
+                if (onErrorListener2 == null || i == -38) {
+                    return true;
+                }
+                onErrorListener2.onError(SystemMediaPlayer.this, i, i2 + "");
+                return true;
+            }
+        });
+    }
+
+    @Override // io.microshow.rxffmpeg.player.BaseMediaPlayer
+    public void setOnCompleteListener(final IMediaPlayer.OnCompletionListener onCompletionListener) {
+        super.setOnCompleteListener(onCompletionListener);
+        this.mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { // from class: io.microshow.rxffmpeg.player.SystemMediaPlayer.4
+            @Override // android.media.MediaPlayer.OnCompletionListener
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                IMediaPlayer.OnCompletionListener onCompletionListener2 = onCompletionListener;
+                if (onCompletionListener2 != null) {
+                    onCompletionListener2.onCompletion(SystemMediaPlayer.this);
+                }
+            }
+        });
+    }
+
+    @Override // io.microshow.rxffmpeg.player.BaseMediaPlayer
+    public void setOnTimeUpdateListener(IMediaPlayer.OnTimeUpdateListener onTimeUpdateListener) {
+        super.setOnTimeUpdateListener(onTimeUpdateListener);
+        this.mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() { // from class: io.microshow.rxffmpeg.player.SystemMediaPlayer.5
+            @Override // android.media.MediaPlayer.OnInfoListener
+            public boolean onInfo(MediaPlayer mediaPlayer, int i, int i2) {
+                if (i == 3 || i == 700) {
+                    if (SystemMediaPlayer.this.mOnLoadingListener != null) {
+                        SystemMediaPlayer.this.mOnLoadingListener.onLoading(SystemMediaPlayer.this, false);
+                    }
+                    return true;
+                }
+                if (i != 701) {
+                    return false;
+                }
+                if (SystemMediaPlayer.this.mOnLoadingListener != null) {
+                    SystemMediaPlayer.this.mOnLoadingListener.onLoading(SystemMediaPlayer.this, true);
+                }
+                return true;
+            }
+        });
+    }
+
+    @Override // io.microshow.rxffmpeg.player.BaseMediaPlayer
+    public void repeatPlay() {
+        play(this.path, this.mMediaPlayer.isLooping());
+    }
+
+    private void cancelTimeUpdateDisposable() {
+        Disposable disposable = this.mTimeUpdateDisposable;
+        if (disposable == null || disposable.isDisposed()) {
+            return;
+        }
+        this.mTimeUpdateDisposable.dispose();
+    }
+
+    public void startTimeUpdateDisposable() {
+        cancelTimeUpdateDisposable();
+        Disposable disposableSubscribe = Flowable.interval(200L, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() { // from class: io.microshow.rxffmpeg.player.SystemMediaPlayer.6
+            /* JADX WARN: Type inference fix 'apply assigned field type' failed
+            java.lang.UnsupportedOperationException: ArgType.getObject(), call class: class jadx.core.dex.instructions.args.ArgType$PrimitiveArg
+            	at jadx.core.dex.instructions.args.ArgType.getObject(ArgType.java:596)
+            	at jadx.core.dex.attributes.nodes.ClassTypeVarsAttr.getTypeVarsMapFor(ClassTypeVarsAttr.java:35)
+            	at jadx.core.dex.nodes.utils.TypeUtils.replaceClassGenerics(TypeUtils.java:177)
+            	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.insertExplicitUseCast(FixTypesVisitor.java:397)
+            	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.tryFieldTypeWithNewCasts(FixTypesVisitor.java:359)
+            	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.applyFieldType(FixTypesVisitor.java:309)
+            	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.visit(FixTypesVisitor.java:94)
+             */
+            @Override // io.reactivex.functions.Consumer
+            public void accept(Long l) throws Exception {
+                if (SystemMediaPlayer.this.mOnTimeUpdateListener != null) {
+                    IMediaPlayer.OnTimeUpdateListener onTimeUpdateListener = SystemMediaPlayer.this.mOnTimeUpdateListener;
+                    SystemMediaPlayer systemMediaPlayer = SystemMediaPlayer.this;
+                    onTimeUpdateListener.onTimeUpdate(systemMediaPlayer, systemMediaPlayer.mMediaPlayer.getCurrentPosition() / 1000, SystemMediaPlayer.this.getDuration() / 1000);
+                }
+            }
+        });
+        this.mTimeUpdateDisposable = disposableSubscribe;
+        this.mCompositeDisposable.add(disposableSubscribe);
+    }
+}

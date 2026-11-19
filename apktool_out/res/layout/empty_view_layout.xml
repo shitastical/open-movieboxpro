@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center" android:layout_gravity="center" android:orientation="vertical" android:paddingBottom="30.0dp" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:layout_gravity="center" android:id="@id/empty_image" android:layout_width="100.0dp" android:layout_height="100.0dp" android:src="@mipmap/ic_no_favorite" android:adjustViewBounds="true" />
+    <TextView android:textSize="16.0sp" android:textColor="#999999" android:layout_gravity="center" android:id="@id/empty_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No Content" />
+    <TextView android:textColor="@color/white" android:id="@id/tvTryAgain" android:paddingLeft="15.0dp" android:paddingTop="10.0dp" android:paddingRight="15.0dp" android:paddingBottom="10.0dp" android:focusable="true" android:clickable="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="5.0dp" android:text="Try again" style="@style/FocusSelectorStyle" />
+</LinearLayout>

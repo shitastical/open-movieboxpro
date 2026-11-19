@@ -1,0 +1,9 @@
+# Local toolchain (fetch with the commands in README.md)
+/tools/
+
+# Build artifacts
+/build/
+apktool_out/build/
+*.apk
+*.idsig
+rebuilt_*

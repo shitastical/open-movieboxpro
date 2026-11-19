@@ -1,0 +1,10 @@
+package com.google.android.exoplayer.metadata.id3;
+
+/* JADX INFO: loaded from: classes4.dex */
+public abstract class Id3Frame {
+    public final String id;
+
+    public Id3Frame(String str) {
+        this.id = str;
+    }
+}

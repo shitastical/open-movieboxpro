@@ -1,0 +1,10 @@
+package j$.time.chrono;
+
+import j$.time.Clock$TickClock$$ExternalSyntheticBackport0;
+
+/* JADX INFO: loaded from: classes3.dex */
+public abstract /* synthetic */ class IsoChronology$$ExternalSyntheticBackport0 {
+    public static /* synthetic */ int m(long j, int i) {
+        return (int) Clock$TickClock$$ExternalSyntheticBackport0.m(j, i);
+    }
+}

@@ -1,0 +1,58 @@
+package com.movieboxpro.androidtv.databinding;
+
+import android.util.SparseIntArray;
+import android.view.View;
+import androidx.databinding.DataBindingComponent;
+import androidx.databinding.ViewDataBinding;
+import com.owen.tvrecyclerview.widget.TvRecyclerView;
+
+/* JADX INFO: loaded from: classes5.dex */
+public class FragmentSpecialFilterBindingImpl extends FragmentSpecialFilterBinding {
+    private static final ViewDataBinding.IncludedLayouts sIncludes = null;
+    private static final SparseIntArray sViewsWithIds = null;
+    private long mDirtyFlags;
+
+    @Override // androidx.databinding.ViewDataBinding
+    protected boolean onFieldChange(int localFieldId, Object object, int fieldId) {
+        return false;
+    }
+
+    @Override // androidx.databinding.ViewDataBinding
+    public boolean setVariable(int variableId, Object variable) {
+        return true;
+    }
+
+    public FragmentSpecialFilterBindingImpl(DataBindingComponent bindingComponent, View root) {
+        this(bindingComponent, root, mapBindings(bindingComponent, root, 1, sIncludes, sViewsWithIds));
+    }
+
+    private FragmentSpecialFilterBindingImpl(DataBindingComponent bindingComponent, View root, Object[] bindings) {
+        super(bindingComponent, root, 0, (TvRecyclerView) bindings[0]);
+        this.mDirtyFlags = -1L;
+        this.recyclerView.setTag(null);
+        setRootTag(root);
+        invalidateAll();
+    }
+
+    @Override // androidx.databinding.ViewDataBinding
+    public void invalidateAll() {
+        synchronized (this) {
+            this.mDirtyFlags = 1L;
+        }
+        requestRebind();
+    }
+
+    @Override // androidx.databinding.ViewDataBinding
+    public boolean hasPendingBindings() {
+        synchronized (this) {
+            return this.mDirtyFlags != 0;
+        }
+    }
+
+    @Override // androidx.databinding.ViewDataBinding
+    protected void executeBindings() {
+        synchronized (this) {
+            this.mDirtyFlags = 0L;
+        }
+    }
+}

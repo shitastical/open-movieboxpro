@@ -1,0 +1,14 @@
+package com.movieboxpro.android.utils;
+
+import com.movieboxpro.android.http.CipherKeys;
+
+/* JADX INFO: loaded from: classes5.dex */
+public class MiniInstallKeys extends CipherKeys {
+    private static final String APP_KEY = "wereader";
+    private static final String IV = "wEiphTn!";
+    private static final String KEY = "844d6cefc426d38373aa1e55";
+
+    public MiniInstallKeys() {
+        super(APP_KEY, KEY, IV);
+    }
+}
